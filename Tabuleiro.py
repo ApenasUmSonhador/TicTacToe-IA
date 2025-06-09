@@ -1,36 +1,56 @@
 from os import name, system
 class Tabuleiro:
-    tabuleiro = [
-                 ['', '', ''],
-                 ['', '', ''],
-                 ['', '', '']
-                ]
-    any_win = False
+    def __init__(self):
+        self.tabuleiro = [
+            ['', '', ''],
+            ['', '', ''],
+            ['', '', '']
+        ]
 
     def limpa_tela(self):
         if name == "nt":
             system('cls')
         else:
             system('clear')
+
     def desenha_tabuleiro(self): 
         "Método responsável por mostrar estádo atual do tabuleiro marcado com 'X', 'O' ou ''."
         for i, linha in enumerate(self.tabuleiro):
+            j = 0
             for elemento in linha:
-                print(elemento if elemento else " ", end=' | ')
+                print(elemento if elemento else ' ', end=' ')
+                if j < 2:
+                    print("| ", end='')
+                    j+=1
             if i < 2:
-                print("\n", "-"*11, sep="")
+                print("\n", "-"*9, sep="")
 
+    def verifica_fim_de_jogo(self):
+        "Método responsável por verificar se o jogo terminou"
+        empate = self.verifica_empate()
+        vitoria, _ = self.verifica_vitoria()
+        return vitoria or empate
+    
+    def verifica_empate(self):
+        "Método responsável por verificar se o jogo terminou em empate"
+        for linha in self.tabuleiro:
+            for elemento in linha:
+                if elemento == '':
+                    return False
+        print("Empate")
+        return True
+    
     def verifica_vitoria(self):
         "Método responsável por avisar vitória no jogo"
         win = self._verifica_verticais() + self._verifica_horizontais() + self._verifica_diagonais()
         if win < 0:
-            self.any_win = True
             print("X win")
+            return True, win
         elif win > 0:
-            self.any_win = True
             print("O win")
-        else:
-            print("Sem vitoriosos")
+            return True, win
+        print("Sem vitoriosos")
+        return False, win
 
     def _verifica_verticais(self):
         """
@@ -87,18 +107,20 @@ class Tabuleiro:
         else:
             self.tabuleiro[linha][coluna] = jogador
 
-
 tabuleiro = Tabuleiro()
-while not tabuleiro.any_win:
+while not tabuleiro.verifica_fim_de_jogo():
     tabuleiro.limpa_tela()
     tabuleiro.desenha_tabuleiro()
     movimento = int(input("\n Digite o movimento (1-9)"))
     tabuleiro.faz_movimento('X', movimento)
     tabuleiro.verifica_vitoria()
     
-    if not tabuleiro.any_win:
+    if not tabuleiro.verifica_fim_de_jogo():
         tabuleiro.limpa_tela()
         tabuleiro.desenha_tabuleiro()
         movimento = int(input("\n Digite o movimento (1-9)"))    
         tabuleiro.faz_movimento('O', movimento)
         tabuleiro.verifica_vitoria()
+
+tabuleiro.limpa_tela()
+tabuleiro.desenha_tabuleiro()
