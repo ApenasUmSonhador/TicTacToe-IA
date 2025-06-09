@@ -1,5 +1,17 @@
+from os import name, system
 class Tabuleiro:
-    tabuleiro = []
+    tabuleiro = [
+                 ['', '', ''],
+                 ['', '', ''],
+                 ['', '', '']
+                ]
+    any_win = False
+
+    def limpa_tela(self):
+        if name == "nt":
+            system('cls')
+        else:
+            system('clear')
     def desenha_tabuleiro(self): 
         "Método responsável por mostrar estádo atual do tabuleiro marcado com 'X', 'O' ou ''."
         for i, linha in enumerate(self.tabuleiro):
@@ -12,8 +24,10 @@ class Tabuleiro:
         "Método responsável por avisar vitória no jogo"
         win = self._verifica_verticais() + self._verifica_horizontais() + self._verifica_diagonais()
         if win < 0:
+            self.any_win = True
             print("X win")
         elif win > 0:
+            self.any_win = True
             print("O win")
         else:
             print("Sem vitoriosos")
@@ -63,3 +77,28 @@ class Tabuleiro:
             if self.tabuleiro[1][1] == 'O':
                 return 1
         return 0
+
+    def faz_movimento(self, jogador, movimento):
+        "Método responsável por realizar movimento de jogador"
+        linha, coluna = (movimento - 1) // 3, (movimento - 1) % 3
+        if self.tabuleiro[linha][coluna] != '':
+            movimento = int(input("Movimento inválido, tente novamente."))
+            self.faz_movimento(jogador, movimento)
+        else:
+            self.tabuleiro[linha][coluna] = jogador
+
+
+tabuleiro = Tabuleiro()
+while not tabuleiro.any_win:
+    tabuleiro.limpa_tela()
+    tabuleiro.desenha_tabuleiro()
+    movimento = int(input("\n Digite o movimento (1-9)"))
+    tabuleiro.faz_movimento('X', movimento)
+    tabuleiro.verifica_vitoria()
+    
+    if not tabuleiro.any_win:
+        tabuleiro.limpa_tela()
+        tabuleiro.desenha_tabuleiro()
+        movimento = int(input("\n Digite o movimento (1-9)"))    
+        tabuleiro.faz_movimento('O', movimento)
+        tabuleiro.verifica_vitoria()
