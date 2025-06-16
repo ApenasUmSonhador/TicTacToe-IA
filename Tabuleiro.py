@@ -1,5 +1,6 @@
 from os import name, system
 class Tabuleiro:
+    "Classe responsável por reger tudo o que controla o estado do tabuleiro no jogo"
     def __init__(self):
         self.tabuleiro = [
             ['', '', ''],
@@ -8,6 +9,7 @@ class Tabuleiro:
         ]
 
     def limpa_tela(self):
+        "Método responsável por limpar console"
         if name == "nt":
             system('cls')
         else:
